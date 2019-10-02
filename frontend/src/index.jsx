@@ -1,11 +1,22 @@
 import React from 'react'
 import ReactDom from 'react-dom'
 import App from './main/app'
-import { combineReducers, createStore } from 'redux'
+import { applyMiddleware, createStore } from 'redux'
 import { Provider } from 'react-redux'
 
-const providers = combineReducers({
-    fields: () => ({ value: 'Opa' })
-})
+import promise from 'redux-promise'
+import multi from 'redux-multi'
+import thunk from 'redux-thunk'
 
-ReactDom.render(<App />, document.getElementById('app'))
+import reducers from './main/reducers'
+
+const devTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+
+const store = applyMiddleware(thunk, multi, promise)(createStore)(reducers, devTools)
+
+ReactDom.render(
+    <Provider store={store}>
+        <App />
+    </Provider>    
+    , 
+document.getElementById('app'))
